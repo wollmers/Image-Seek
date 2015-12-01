@@ -1,0 +1,171 @@
+package Image::Seek;
+
+use 5.006;
+use strict;
+use warnings;
+use Carp;
+
+require Exporter;
+use AutoLoader;
+
+our @ISA = qw(Exporter);
+our %EXPORT_TAGS = ( 'all' => [ qw( add_image query_id loaddb savedb cleardb
+    add_image_imager add_image_imlib2 ) ] );
+our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
+our @EXPORT = qw( );
+
+our $VERSION = '0.01';
+
+require XSLoader;
+XSLoader::load('Image::Seek', $VERSION);
+
+=head1 NAME
+
+Image::Seek - A port of ImgSeek to Perl
+
+=head1 DESCRIPTION
+
+    use Image::Seek qw(loaddb add_image query_id savedb);
+
+    loaddb("haar.db");
+
+    # EITHER
+    my $img = Imager->new();
+    $img->open(file => "photo-216.jpg");
+    # OR
+    my $img = Image::Imlib2->load("photo-216.jpg");
+
+    # Then...
+    add_image($img, 216);
+savedb("haar.db");
+
+    my @results = query_id(216); # What looks like this photo?
+
+=head1 DESCRIPTION
+
+ImgSeek (http://www.imgseek.net/) is an implementation of Haar wavelet
+decomposition techniques to find similar pictures in a library. This
+module is port of the ImgSeek library to Perl's XS. It can deal with
+image objects produced by the C<Imager> and C<Image::Imlib2> libraries.
+
+=head1 EXPORT
+
+None by default, but the following functions are available:
+
+=head2 savedb($file)
+
+Dumps the state of the norms and image buckets to the file C<$file>.
+
+=head2 loaddb($file)
+
+Loads a database of image norms produced by savedb
+
+=head2 cleardb
+
+Clears the internal database. Note that C<loaddb> will load into memory
+a bunch of data that you may already have - it will duplicate rather
+than replace this data, so results will be skewed if you load a database
+multiple times without clearing it in between.
+
+=head2 add_image($image, $id)
+
+Adds the image object to the database, keyed against the numeric id
+C<$id>. This will compute the Haar transformation for a 128x128
+thumbnail of the image, and then store its norms into a database in
+memory.
+
+=head2 query_id($id[, $results))
+
+This queries the internal database for pictures which are "like" number
+C<$id>. It returns a list of C<$results> results (by default, 10);
+a result is an array reference. The first element is the ID of a
+picture, the second is a score. So for example:
+
+    query_id(2481, 5)
+
+returns, in a shoot I have, the following:
+
+          [ 2481, -38.3800003528595 ],
+          [ 2480, -37.5519620793145 ],
+          [ 2478, -37.39896965962   ],
+          [ 2479, -37.2777427507208 ],
+          [ 2584, -10.0803730081134 ],
+          [ 2795, -7.89326129961427 ]
+
+Notice that the scores go the opposite way to what you might imagine:
+lower is better. The results come out sorted, and the first result is
+the thing you queried for.
+
+=cut
+
+sub add_image {
+    my ($image, $id) = @_;
+    if (UNIVERSAL::isa($image, "Imager"))        { goto &add_image_imager }
+    if (UNIVERSAL::isa($image, "Image::Imlib2")) { goto &add_image_imlib2 }
+    croak "Don't know what sort of image $image is";
+}
+
+sub add_image_imager {
+    my ($img, $id) = @_;
+    my ($reds, $blues, $greens);
+    require Imager;
+    my $thumb = $img->scaleX(pixels => 128)->scaleY(pixels => 128);
+    for my $y (0..127) {
+        my @cols = $thumb->getscanline(y => $y);
+        for (@cols) {
+            my ($r, $g, $b) = $_->rgba;
+            $reds .= chr($r); $blues .= chr($b); $greens .= chr($g);
+        }
+    }
+    addImage($id, $reds, $greens, $blues);
+}
+
+use Digest::MD5 ("md5_hex");
+
+sub add_image_imlib2 {
+    my ($img, $id) = @_;
+    my ($reds, $blues, $greens);
+    require Image::Imlib2;
+    my $thumb = $img->create_scaled_image(128,128);
+    for my $y (0..127) {
+        for my $x (0..127) {
+            my ($r, $g, $b,$a) = $thumb->query_pixel($x,$y);
+            $reds .= chr($r); $blues .= chr($b); $greens .= chr($g);
+        }
+    }
+    addImage($id, $reds, $greens, $blues);
+}
+
+sub query_id {
+    my $id = shift;
+    my $results = shift || 10;
+    queryImgID($id, $results);
+    my @r = results();
+    my @rv;
+    unshift @rv, [shift @r, shift @r] while @r;
+    @rv;
+}
+
+1;
+__END__
+
+
+=head1 SEE ALSO
+
+http://www.imgseek.net/
+
+=head1 AUTHOR
+
+Simon Cozens, E<lt>simon@cpan.org<gt>
+
+All the clever bits were written by Ricardo Niederberger Cabral; I just
+mangled them to wrap Perl around them.
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2005 by Simon Cozens
+
+This library is free software; as it is a derivative work of imgseek,
+this library is distributed under the same terms (GPL) as imgseek.
+
+=cut
