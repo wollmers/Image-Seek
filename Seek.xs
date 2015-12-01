@@ -13,6 +13,10 @@ MODULE = Image::Seek		PACKAGE = Image::Seek
 
 INCLUDE: const-xs.inc
 
+void
+removeID(id)
+    long id
+
 void 
 addImage(id, red, green, blue)
     long id

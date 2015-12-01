@@ -14,7 +14,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw( add_image query_id loaddb savedb cleardb
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw( );
 
-our $VERSION = '0.01';
+our $VERSION = '0.03';
 
 require XSLoader;
 XSLoader::load('Image::Seek', $VERSION);
@@ -30,6 +30,8 @@ Image::Seek - A port of ImgSeek to Perl
     loaddb("haar.db");
 
     # EITHER
+    my $img = GD::Image->newFromJpeg("photo-216.jpg", 1);
+    # OR
     my $img = Imager->new();
     $img->open(file => "photo-216.jpg");
     # OR
@@ -37,9 +39,11 @@ Image::Seek - A port of ImgSeek to Perl
 
     # Then...
     add_image($img, 216);
-savedb("haar.db");
+    savedb("haar.db");
 
     my @results = query_id(216); # What looks like this photo?
+
+    remove_id(216); # Just remove id from database.
 
 =head1 DESCRIPTION
 
@@ -74,6 +78,10 @@ C<$id>. This will compute the Haar transformation for a 128x128
 thumbnail of the image, and then store its norms into a database in
 memory.
 
+=head2 remove_id($id)
+
+remove id from database, and you should C<savedb> to save the changed database.
+
 =head2 query_id($id[, $results))
 
 This queries the internal database for pictures which are "like" number
@@ -102,7 +110,24 @@ sub add_image {
     my ($image, $id) = @_;
     if (UNIVERSAL::isa($image, "Imager"))        { goto &add_image_imager }
     if (UNIVERSAL::isa($image, "Image::Imlib2")) { goto &add_image_imlib2 }
+    if (UNIVERSAL::isa($image, "GD::Image"))     { goto &add_image_gd }
     croak "Don't know what sort of image $image is";
+}
+
+sub add_image_gd {
+    my ($img, $id) = @_;
+    my ($reds, $blues, $greens);
+    require GD;
+    my $thumb = new GD::Image(128,128,1);
+    $thumb ->copyResized($img,0,0,0,0,128,128,$img->width ,$img->height);
+
+    for my $y (0..127) {
+        for my $x (0..127) {
+            my ($r, $g, $b) = $thumb->rgb($thumb->getPixel($x,$y));
+            $reds .= chr($r); $blues .= chr($b); $greens .= chr($g);
+        }
+    }
+    addImage($id, $reds, $greens, $blues);
 }
 
 sub add_image_imager {
@@ -146,6 +171,11 @@ sub query_id {
     @rv;
 }
 
+sub remove_id {
+    my $id = shift;
+    removeID($id);
+}
+
 1;
 __END__
 
@@ -157,13 +187,14 @@ http://www.imgseek.net/
 =head1 AUTHOR
 
 Simon Cozens, E<lt>simon@cpan.org<gt>
+Lilo Huang, E<lt>kenwu@cpan.orgE<gt>
 
 All the clever bits were written by Ricardo Niederberger Cabral; I just
 mangled them to wrap Perl around them.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2005 by Simon Cozens
+Copyright (C) 2005 by Simon Cozens, 2008 by Lilo Huang
 
 This library is free software; as it is a derivative work of imgseek,
 this library is distributed under the same terms (GPL) as imgseek.
