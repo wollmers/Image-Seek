@@ -14,6 +14,21 @@ WriteMakefile(
    XSOPT => "-C++",
     LIBS => ($^O =~ /darwin/ ? ['-lSystem'] : []),
     LD => $ld,
+    META_MERGE => {
+        'meta-spec' => { version => 2 },
+        license  => [ 'gpl_1' ],
+        resources => {
+            repository => {
+                type => 'git',
+                url  => 'https://github.com/wollmers/Image-Seek.git',
+                web  => 'https://github.com/wollmers/Image-Seek',
+            },
+            homepage => 'https://github.com/wollmers/Image-Seek',
+            bugtracker => {
+                web => 'https://github.com/wollmers/Image-Seek/issues',
+            },
+        },
+     },
 );
 if  (eval {require ExtUtils::Constant; 1}) {
   # If you edit these definitions to change the constants used by this module,
