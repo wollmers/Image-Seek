@@ -11,16 +11,20 @@ BEGIN {
 
 use Test::More;
 use Image::Seek;
+use Test::Exception;
 
 #use Image::Imlib2;
 
-eval "use Image::Imlib2";
+eval "use MyAny";
 if ( $@ ) {
-  plan skip_all => 'Image::Imlib2 required for testing with images';
+  plan skip_all => 'MyAny required for testing with images';
 }
 else {
-  $img = Image::Imlib2->new(1, 1);
-  Image::Seek::add_image($img, 1);
+  $img = MyAny->new();
+  ok($img);
+  #Image::Seek::add_image($img, 1);
+  throws_ok( sub { Image::Seek::add_image($img, 1); }, qr/know/,
+    'unknow ok' );
   ok(1);
   done_testing;
 }

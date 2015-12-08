@@ -1,5 +1,7 @@
 #!perl
 
+use lib qw(./lib/ ./t/lib/);
+
 BEGIN {
   unless ($ENV{AUTHOR_TESTING}) {
     require Test::More;
@@ -9,6 +11,7 @@ BEGIN {
 
 use Test::More;
 use Image::Seek;
+#use Imager;
 
 eval "use Imager";
 if ( $@ ) {
