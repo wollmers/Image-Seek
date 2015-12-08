@@ -1,6 +1,10 @@
 Revision history for Perl extension Image::Seek.
 
-0.03  
+0.04  Tue Dec  8 12:40:00 2015
+    - documentation and packaging improvements
+    - improved test coverage
+
+0.03  Tue Dec  8 12:40:00 2015
     - patch from Andrew Chadwick (ANDREWC) solving issue
       https://rt.cpan.org/Public/Bug/Display.html?id=21163
       cleardb() double-free segv

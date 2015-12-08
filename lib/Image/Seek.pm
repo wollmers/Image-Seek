@@ -14,7 +14,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw( add_image query_id loaddb savedb cleardb
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw( );
 
-our $VERSION = '0.03_03';
+our $VERSION = '0.04';
 
 require XSLoader;
 XSLoader::load('Image::Seek', $VERSION);
@@ -23,7 +23,16 @@ XSLoader::load('Image::Seek', $VERSION);
 
 Image::Seek - A port of ImgSeek to Perl
 
-=head1 DESCRIPTION
+=begin html
+
+<a href="https://travis-ci.org/wollmers/Image-Seek"><img src="https://travis-ci.org/wollmers/LCS.png" alt="Image-Seek"></a>
+<a href='https://coveralls.io/r/wollmers/Image-Seek?branch=master'><img src='https://coveralls.io/repos/wollmers/Image-Seek/badge.png?branch=master' alt='Coverage Status' /></a>
+<a href='http://cpants.cpanauthors.org/dist/Image-Seek'><img src='http://cpants.cpanauthors.org/dist/Image-Seek.png' alt='Kwalitee Score' /></a>
+<a href="http://badge.fury.io/pl/Image-Seek"><img src="https://badge.fury.io/pl/Image-Seek.svg" alt="CPAN version" height="18"></a>
+
+=end html
+
+=head1 SYNOPSIS
 
     use Image::Seek qw(loaddb add_image query_id savedb);
 
@@ -31,9 +40,11 @@ Image::Seek - A port of ImgSeek to Perl
 
     # EITHER
     my $img = GD::Image->newFromJpeg("photo-216.jpg", 1);
+
     # OR
     my $img = Imager->new();
     $img->open(file => "photo-216.jpg");
+
     # OR
     my $img = Image::Imlib2->load("photo-216.jpg");
 
@@ -50,7 +61,7 @@ Image::Seek - A port of ImgSeek to Perl
 ImgSeek (http://www.imgseek.net/) is an implementation of Haar wavelet
 decomposition techniques to find similar pictures in a library. This
 module is port of the ImgSeek library to Perl's XS. It can deal with
-image objects produced by the C<Imager> and C<Image::Imlib2> libraries.
+image objects produced by the C<Imager>, C<Image::Imlib2> and C<GD> libraries.
 
 =head1 EXPORT
 
@@ -117,7 +128,7 @@ sub add_image {
 sub add_image_gd {
     my ($img, $id) = @_;
     my ($reds, $blues, $greens);
-    #require GD;
+
     my $thumb = new GD::Image(128,128,1);
     $thumb->copyResized($img,0,0,0,0,128,128,$img->width ,$img->height);
 
@@ -133,7 +144,7 @@ sub add_image_gd {
 sub add_image_imager {
     my ($img, $id) = @_;
     my ($reds, $blues, $greens);
-    #require Imager;
+
     my $thumb = $img->scaleX(pixels => 128)->scaleY(pixels => 128);
     for my $y (0..127) {
         my @cols = $thumb->getscanline('y' => $y);
@@ -145,12 +156,10 @@ sub add_image_imager {
     addImage($id, $reds, $greens, $blues);
 }
 
-#use Digest::MD5 ("md5_hex");
-
 sub add_image_imlib2 {
     my ($img, $id) = @_;
     my ($reds, $blues, $greens);
-    #require Image::Imlib2;
+
     my $thumb = $img->create_scaled_image(128,128);
     for my $y (0..127) {
         for my $x (0..127) {
@@ -184,17 +193,32 @@ __END__
 
 http://www.imgseek.net/
 
+=head1 SOURCE REPOSITORY
+
+L<http://github.com/wollmers/Image-Seek>
+
+=head1 MAINTAINER
+
+Helmut Wollmersdorfer E<lt>helmut.wollmersdorfer@gmail.comE<gt>
+
+=begin html
+
+<a href='http://cpants.cpanauthors.org/author/wollmers'><img src='http://cpants.cpanauthors.org/author/wollmers.png' alt='Kwalitee Score' /></a>
+
+=end html
+
 =head1 AUTHOR
 
 Simon Cozens, E<lt>simon@cpan.org<gt>
 Lilo Huang, E<lt>kenwu@cpan.orgE<gt>
+Helmut Wollmersdorfer, E<lt>helmut.wollmersdorfer@gmail.comE<gt>
 
-All the clever bits were written by Ricardo Niederberger Cabral; I just
+All the clever bits were written by Ricardo Niederberger Cabral; Simon Cozens just
 mangled them to wrap Perl around them.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2005 by Simon Cozens, 2008 by Lilo Huang
+Copyright (C) 2005 by Simon Cozens, 2008 by Lilo Huang, 2015 Helmut Wollmersdorfer
 
 This library is free software; as it is a derivative work of imgseek,
 this library is distributed under the same terms (GPL) as imgseek.

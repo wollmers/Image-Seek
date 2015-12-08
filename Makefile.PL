@@ -9,11 +9,16 @@ $ld =~ s/gcc/c++/ or $ld =~ s/cc/c++/;
 WriteMakefile(
     NAME              => 'Image::Seek',
     VERSION_FROM      => 'lib/Image/Seek.pm', # finds $VERSION
+    MIN_PERL_VERSION  => '5.6.0',
     PREREQ_PM         => {}, # e.g., Module::Name => 1.1
-   CC => "c++",
-   XSOPT => "-C++",
+    CC => "c++",
+    XSOPT => "-C++",
     LIBS => ($^O =~ /darwin/ ? ['-lSystem'] : []),
     LD => $ld,
+    TEST_REQUIRES		=> {
+            "Test::Exception" => "0",
+            "Test::More" => "0.88",
+    },
     META_MERGE => {
         'meta-spec' => { version => 2 },
         license  => [ 'gpl_1' ],

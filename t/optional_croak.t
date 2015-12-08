@@ -13,8 +13,6 @@ use Test::More;
 use Image::Seek;
 use Test::Exception;
 
-#use Image::Imlib2;
-
 eval "use MyAny";
 if ( $@ ) {
   plan skip_all => 'MyAny required for testing with images';
