@@ -8,6 +8,8 @@ $ld =~ s/gcc/c++/ or $ld =~ s/cc/c++/;
 
 WriteMakefile(
     NAME              => 'Image::Seek',
+    AUTHOR			  => 'Helmut Wollmersdorfer <helmut.wollmersdorfer@gmail.com>',
+    ABSTRACT_FROM     => 'lib/Image/Seek.pm',
     VERSION_FROM      => 'lib/Image/Seek.pm', # finds $VERSION
     MIN_PERL_VERSION  => '5.6.0',
     PREREQ_PM         => {}, # e.g., Module::Name => 1.1
