@@ -117,9 +117,9 @@ sub add_image {
 sub add_image_gd {
     my ($img, $id) = @_;
     my ($reds, $blues, $greens);
-    require GD;
+    #require GD;
     my $thumb = new GD::Image(128,128,1);
-    $thumb ->copyResized($img,0,0,0,0,128,128,$img->width ,$img->height);
+    $thumb->copyResized($img,0,0,0,0,128,128,$img->width ,$img->height);
 
     for my $y (0..127) {
         for my $x (0..127) {
@@ -133,10 +133,10 @@ sub add_image_gd {
 sub add_image_imager {
     my ($img, $id) = @_;
     my ($reds, $blues, $greens);
-    require Imager;
+    #require Imager;
     my $thumb = $img->scaleX(pixels => 128)->scaleY(pixels => 128);
     for my $y (0..127) {
-        my @cols = $thumb->getscanline(y => $y);
+        my @cols = $thumb->getscanline('y' => $y);
         for (@cols) {
             my ($r, $g, $b) = $_->rgba;
             $reds .= chr($r); $blues .= chr($b); $greens .= chr($g);
@@ -145,12 +145,12 @@ sub add_image_imager {
     addImage($id, $reds, $greens, $blues);
 }
 
-use Digest::MD5 ("md5_hex");
+#use Digest::MD5 ("md5_hex");
 
 sub add_image_imlib2 {
     my ($img, $id) = @_;
     my ($reds, $blues, $greens);
-    require Image::Imlib2;
+    #require Image::Imlib2;
     my $thumb = $img->create_scaled_image(128,128);
     for my $y (0..127) {
         for my $x (0..127) {

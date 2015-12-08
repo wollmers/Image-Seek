@@ -13,6 +13,8 @@ install:
   - cpanm --quiet --notest Devel::Cover::Report::Coveralls
   - cpanm --quiet --notest --installdeps --with-develop .
   - cpanm --quiet --notest Imager
+  - cpanm --quiet --notest Image::Imlib2
+  - cpanm --quiet --notest GD::Image
 
 script:
   - perl Makefile.PL
