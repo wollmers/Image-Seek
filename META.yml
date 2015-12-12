@@ -4,10 +4,12 @@ author:
   - 'Helmut Wollmersdorfer <helmut.wollmersdorfer@gmail.com>'
 build_requires:
   ExtUtils::MakeMaker: '0'
+  ExtUtils::CppGuess: '0'
   Test::Exception: '0'
   Test::More: '0.88'
 configure_requires:
   ExtUtils::MakeMaker: '0'
+  ExtUtils::CppGuess: '0'
 dynamic_config: 0
 generated_by: 'ExtUtils::MakeMaker version 7.04, CPAN::Meta::Converter version 2.150005'
 license: gpl
