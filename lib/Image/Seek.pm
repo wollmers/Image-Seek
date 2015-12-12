@@ -188,6 +188,38 @@ Notice that the scores go the opposite way to what you might imagine:
 lower is better. The results come out sorted, and the first result is
 the thing you queried for.
 
+=head2 addImage($id, $reds, $greens, $blues)
+
+Internally used.
+
+=head2 add_image_gd($image, $id)
+
+Internally used.
+
+=head2 add_image_imager($image, $id)
+
+Internally used.
+
+=head2 add_image_imlib2($image, $id)
+
+Internally used.
+
+=head2 constant
+
+Internally used.
+
+=head2 queryImgID
+
+Internally used.
+
+=head2 removeID
+
+Internally used.
+
+=head2 results
+
+Internally used.
+
 =head1 SEE ALSO
 
 http://www.imgseek.net/
