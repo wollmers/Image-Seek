@@ -2,9 +2,14 @@ use 5.006;
 use ExtUtils::MakeMaker;
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
-use Config;
-my $ld = $Config{ld};
-$ld =~ s/gcc/c++/ or $ld =~ s/cc/c++/;
+
+use ExtUtils::CppGuess;
+
+my $guess = ExtUtils::CppGuess->new;
+
+#use Config;
+#my $ld = $Config{ld};
+#$ld =~ s/gcc/c++/ or $ld =~ s/cc/c++/;
 
 WriteMakefile(
     NAME              => 'Image::Seek',
@@ -13,10 +18,12 @@ WriteMakefile(
     VERSION_FROM      => 'lib/Image/Seek.pm', # finds $VERSION
     MIN_PERL_VERSION  => '5.6.0',
     PREREQ_PM         => {}, # e.g., Module::Name => 1.1
-    CC => "c++",
-    XSOPT => "-C++",
+    ##CC => "c++",
+    ##XSOPT => "-C++",
     #LIBS => ($^O =~ /darwin/ ? ['-lSystem'] : []),
-    LD => $ld,
+    ##LD => $ld,
+    $guess->makemaker_options,
+
     TEST_REQUIRES		=> {
             "Test::Exception" => "0",
             "Test::More" => "0.88",
