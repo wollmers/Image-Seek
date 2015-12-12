@@ -73,7 +73,7 @@ int addImage(const long int id, unsigned char* red, unsigned char* green, unsign
      doThumb should be set to 1 if you want to save the thumbnail on thname
      Images with a dimension smaller than ignDim are ignored
   */
-  double* avgl = (double*)Perl_safesysmalloc(3*sizeof(double));
+  double* avgl = (double*)safesysmalloc(3*sizeof(double));
   int* sig1;
   int* sig2;
   int* sig3;
@@ -143,10 +143,10 @@ int loaddb(char* filename) {
     f.read ((char*)&(id), sizeof(long int) );
     sigs[id] = new sigStruct();
     sigs[id]->id = id;
-    sigs[id]->sig1 = (int*)(Perl_safesysmalloc(40*sizeof(int)));
-    sigs[id]->sig2 = (int*)(Perl_safesysmalloc(40*sizeof(int)));
-    sigs[id]->sig3 = (int*)(Perl_safesysmalloc(40*sizeof(int)));
-    sigs[id]->avgl = (double*)Perl_safesysmalloc(3*sizeof(double));
+    sigs[id]->sig1 = (int*)(safesysmalloc(40*sizeof(int)));
+    sigs[id]->sig2 = (int*)(safesysmalloc(40*sizeof(int)));
+    sigs[id]->sig3 = (int*)(safesysmalloc(40*sizeof(int)));
+    sigs[id]->avgl = (double*)safesysmalloc(3*sizeof(double));
     // sig
     for ( c = 0;c<40;c++) {
       f.read ((char*)&(coef), sizeof( int) );   

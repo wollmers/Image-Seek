@@ -4,14 +4,16 @@
 #include "perl.h"
 #include "XSUB.h"
 
-#include "ppport.h"
-
 #include "const-c.inc"
 
 
-MODULE = Image::Seek		PACKAGE = Image::Seek		
+MODULE = Image::Seek		PACKAGE = Image::Seek
+
+PROTOTYPES: DISABLE		
 
 INCLUDE: const-xs.inc
+
+PROTOTYPES: ENABLE
 
 void
 removeID(id)

@@ -2,20 +2,15 @@
 
 use lib qw(./lib/ ./t/lib/);
 
-BEGIN {
-  unless ($ENV{AUTHOR_TESTING}) {
-    require Test::More;
-    Test::More::plan(skip_all => 'these tests are for author testing');
-  }
-}
-
 use Test::More;
 use Image::Seek;
-use Test::Exception;
+#use Test::Exception;
 
-eval "use MyAny";
+use MyAny;
+
+eval "use Test::Exception";
 if ( $@ ) {
-  plan skip_all => 'MyAny required for testing with images';
+  plan skip_all => 'Test::Exception required for testing croak';
 }
 else {
   $img = MyAny->new();
@@ -26,5 +21,3 @@ else {
   ok(1);
   done_testing;
 }
-
-

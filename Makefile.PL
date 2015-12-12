@@ -15,7 +15,7 @@ WriteMakefile(
     PREREQ_PM         => {}, # e.g., Module::Name => 1.1
     CC => "c++",
     XSOPT => "-C++",
-    LIBS => ($^O =~ /darwin/ ? ['-lSystem'] : []),
+    #LIBS => ($^O =~ /darwin/ ? ['-lSystem'] : []),
     LD => $ld,
     TEST_REQUIRES		=> {
             "Test::Exception" => "0",

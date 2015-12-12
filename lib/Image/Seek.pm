@@ -19,6 +19,79 @@ our $VERSION = '0.04';
 require XSLoader;
 XSLoader::load('Image::Seek', $VERSION);
 
+
+
+sub add_image {
+    my ($image, $id) = @_;
+    if (UNIVERSAL::isa($image, "Imager"))        { goto &add_image_imager }
+    if (UNIVERSAL::isa($image, "Image::Imlib2")) { goto &add_image_imlib2 }
+    if (UNIVERSAL::isa($image, "GD::Image"))     { goto &add_image_gd }
+    croak "Don't know what sort of image $image is";
+}
+
+sub add_image_gd {
+    my ($img, $id) = @_;
+    my ($reds, $blues, $greens);
+
+    my $thumb = new GD::Image(128,128,1);
+    $thumb->copyResized($img,0,0,0,0,128,128,$img->width ,$img->height);
+
+    for my $y (0..127) {
+        for my $x (0..127) {
+            my ($r, $g, $b) = $thumb->rgb($thumb->getPixel($x,$y));
+            $reds .= chr($r); $blues .= chr($b); $greens .= chr($g);
+        }
+    }
+    addImage($id, $reds, $greens, $blues);
+}
+
+sub add_image_imager {
+    my ($img, $id) = @_;
+    my ($reds, $blues, $greens);
+
+    my $thumb = $img->scaleX(pixels => 128)->scaleY(pixels => 128);
+    for my $y (0..127) {
+        my @cols = $thumb->getscanline('y' => $y);
+        for (@cols) {
+            my ($r, $g, $b) = $_->rgba;
+            $reds .= chr($r); $blues .= chr($b); $greens .= chr($g);
+        }
+    }
+    addImage($id, $reds, $greens, $blues);
+}
+
+sub add_image_imlib2 {
+    my ($img, $id) = @_;
+    my ($reds, $blues, $greens);
+
+    my $thumb = $img->create_scaled_image(128,128);
+    for my $y (0..127) {
+        for my $x (0..127) {
+            my ($r, $g, $b,$a) = $thumb->query_pixel($x,$y);
+            $reds .= chr($r); $blues .= chr($b); $greens .= chr($g);
+        }
+    }
+    addImage($id, $reds, $greens, $blues);
+}
+
+sub query_id {
+    my $id = shift;
+    my $results = shift || 10;
+    queryImgID($id, $results);
+    my @r = results();
+    my @rv;
+    unshift @rv, [shift @r, shift @r] while @r;
+    @rv;
+}
+
+sub remove_id {
+    my $id = shift;
+    removeID($id);
+}
+
+1;
+__END__
+
 =head1 NAME
 
 Image::Seek - A port of ImgSeek to Perl
@@ -114,80 +187,6 @@ returns, in a shoot I have, the following:
 Notice that the scores go the opposite way to what you might imagine:
 lower is better. The results come out sorted, and the first result is
 the thing you queried for.
-
-=cut
-
-sub add_image {
-    my ($image, $id) = @_;
-    if (UNIVERSAL::isa($image, "Imager"))        { goto &add_image_imager }
-    if (UNIVERSAL::isa($image, "Image::Imlib2")) { goto &add_image_imlib2 }
-    if (UNIVERSAL::isa($image, "GD::Image"))     { goto &add_image_gd }
-    croak "Don't know what sort of image $image is";
-}
-
-sub add_image_gd {
-    my ($img, $id) = @_;
-    my ($reds, $blues, $greens);
-
-    my $thumb = new GD::Image(128,128,1);
-    $thumb->copyResized($img,0,0,0,0,128,128,$img->width ,$img->height);
-
-    for my $y (0..127) {
-        for my $x (0..127) {
-            my ($r, $g, $b) = $thumb->rgb($thumb->getPixel($x,$y));
-            $reds .= chr($r); $blues .= chr($b); $greens .= chr($g);
-        }
-    }
-    addImage($id, $reds, $greens, $blues);
-}
-
-sub add_image_imager {
-    my ($img, $id) = @_;
-    my ($reds, $blues, $greens);
-
-    my $thumb = $img->scaleX(pixels => 128)->scaleY(pixels => 128);
-    for my $y (0..127) {
-        my @cols = $thumb->getscanline('y' => $y);
-        for (@cols) {
-            my ($r, $g, $b) = $_->rgba;
-            $reds .= chr($r); $blues .= chr($b); $greens .= chr($g);
-        }
-    }
-    addImage($id, $reds, $greens, $blues);
-}
-
-sub add_image_imlib2 {
-    my ($img, $id) = @_;
-    my ($reds, $blues, $greens);
-
-    my $thumb = $img->create_scaled_image(128,128);
-    for my $y (0..127) {
-        for my $x (0..127) {
-            my ($r, $g, $b,$a) = $thumb->query_pixel($x,$y);
-            $reds .= chr($r); $blues .= chr($b); $greens .= chr($g);
-        }
-    }
-    addImage($id, $reds, $greens, $blues);
-}
-
-sub query_id {
-    my $id = shift;
-    my $results = shift || 10;
-    queryImgID($id, $results);
-    my @r = results();
-    my @rv;
-    unshift @rv, [shift @r, shift @r] while @r;
-    @rv;
-}
-
-sub remove_id {
-    my $id = shift;
-    removeID($id);
-}
-
-1;
-__END__
-
 
 =head1 SEE ALSO
 
