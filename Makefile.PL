@@ -25,12 +25,36 @@ WriteMakefile(
     $guess->makemaker_options,
 
     TEST_REQUIRES		=> {
-            "Test::Exception" => "0",
-            "Test::More" => "0.88",
+            'Test::Exception' => '0',
+            'Test::More' => '0.88',
     },
     META_MERGE => {
         'meta-spec' => { version => 2 },
         license  => [ 'gpl_1' ],
+        prereqs => {
+  			runtime => {
+    			requires => {
+      				'perl'          => '5.006',
+      				'File::Spec'    => '0.86',
+      				'JSON'          => '2.16',
+    			},
+    			recommends => {
+    			},
+    			suggests => {
+    			},
+  			},
+ 			build => {
+    			requires => {
+      				'ExtUtils::CppGuess' => '0.11',
+    			},
+  			},
+  			test => {
+    			requires => {
+      				'Test::Exception' => '0',
+            		'Test::More' 	  => '0.88',
+    			},
+  			}
+		},
         resources => {
             repository => {
                 type => 'git',
@@ -51,12 +75,12 @@ if  (eval {require ExtUtils::Constant; 1}) {
   # changes.
   my @names = (qw());
   ExtUtils::Constant::WriteConstants(
-                                     NAME         => 'Image::Seek',
-                                     NAMES        => \@names,
-                                     DEFAULT_TYPE => 'IV',
-                                     C_FILE       => 'const-c.inc',
-                                     XS_FILE      => 'const-xs.inc',
-                                  );
+	NAME         => 'Image::Seek',
+	NAMES        => \@names,
+	DEFAULT_TYPE => 'IV',
+	C_FILE       => 'const-c.inc',
+	XS_FILE      => 'const-xs.inc',
+  );
 
 }
 else {

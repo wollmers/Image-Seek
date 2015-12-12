@@ -1,6 +1,6 @@
 Revision history for Perl extension Image::Seek.
 
-0.05
+0.04_02
     - add Image::Magick support
     - use ExtUtils::CppGuess
 

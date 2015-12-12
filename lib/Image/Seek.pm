@@ -14,7 +14,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw( add_image query_id loaddb savedb cleardb
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw( );
 
-our $VERSION = '0.04_01';
+our $VERSION = '0.04_02';
 
 require XSLoader;
 XSLoader::load('Image::Seek', $VERSION);
