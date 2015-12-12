@@ -26,7 +26,26 @@ sub add_image {
     if (UNIVERSAL::isa($image, "Imager"))        { goto &add_image_imager }
     if (UNIVERSAL::isa($image, "Image::Imlib2")) { goto &add_image_imlib2 }
     if (UNIVERSAL::isa($image, "GD::Image"))     { goto &add_image_gd }
+    if (UNIVERSAL::isa($image, "Image::Magick")) { goto &add_image_magick }
     croak "Don't know what sort of image $image is";
+}
+
+sub add_image_magick {
+    my ($img, $id) = @_;
+    my ($reds, $blues, $greens);
+
+    #$image->Get('width', 'height');
+
+    my $thumb = $img->Clone();
+    $thumb->Scale('128x128!');
+
+    for my $y (0..127) {
+        for my $x (0..127) {
+            my ($r, $g, $b) = $thumb->GetPixel('x' => $x, 'y' => $y);
+            $reds .= chr($r); $blues .= chr($b); $greens .= chr($g);
+        }
+    }
+    addImage($id, $reds, $greens, $blues);
 }
 
 sub add_image_gd {
@@ -189,6 +208,10 @@ lower is better. The results come out sorted, and the first result is
 the thing you queried for.
 
 =head2 addImage($id, $reds, $greens, $blues)
+
+Internally used.
+
+=head2 add_image_magick($image, $id)
 
 Internally used.
 
