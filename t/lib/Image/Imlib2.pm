@@ -1,5 +1,5 @@
 package # hide from PAUSE
-  Image::Imlib2 {
+  Image::Imlib2;
 
   sub new {
     my $class = shift;
@@ -13,4 +13,4 @@ package # hide from PAUSE
   }
 
   1;
-}
+

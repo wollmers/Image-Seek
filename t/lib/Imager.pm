@@ -1,5 +1,5 @@
 package  # hide from PAUSE
-  Imager {
+  Imager;
 
   sub new {
     my $class = shift;
@@ -21,4 +21,4 @@ package  # hide from PAUSE
   }
 
   1;
-}
+

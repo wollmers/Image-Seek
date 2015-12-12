@@ -1,5 +1,5 @@
 package # hide from PAUSE
-  GD::Image {
+  GD::Image;
 
   sub new {
     my $class = shift;
@@ -18,4 +18,4 @@ package # hide from PAUSE
   sub getPixel { 1;}
 
   1;
-}
+
