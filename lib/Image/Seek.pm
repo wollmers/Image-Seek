@@ -10,7 +10,7 @@ use AutoLoader;
 
 our @ISA = qw(Exporter);
 our %EXPORT_TAGS = ( 'all' => [ qw( add_image query_id loaddb savedb cleardb
-    add_image_imager add_image_imlib2 ) ] );
+    add_image_imager add_image_imlib2 remove_id) ] );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw( );
 
