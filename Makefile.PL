@@ -35,8 +35,6 @@ WriteMakefile(
   			runtime => {
     			requires => {
       				'perl'          => '5.006',
-      				'File::Spec'    => '0.86',
-      				'JSON'          => '2.16',
     			},
     			recommends => {
     			},
@@ -45,9 +43,16 @@ WriteMakefile(
   			},
  			build => {
     			requires => {
+    			    'ExtUtils::MakeMaker' => '0',
       				'ExtUtils::CppGuess' => '0.11',
     			},
   			},
+  			configure => {
+         		requires => {
+            		'ExtUtils::MakeMaker' => '0',
+            		'ExtUtils::CppGuess' => '0.11',
+         		}
+      		},
   			test => {
     			requires => {
       				'Test::Exception' => '0',
