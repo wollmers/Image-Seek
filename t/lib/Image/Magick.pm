@@ -14,6 +14,10 @@ package # hide from PAUSE
     return (20,20,20);
   }
 
+  sub Get {
+    return (20,20);
+  }
+
   sub GetPixels {
     return (20 x 50);
   }
