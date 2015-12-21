@@ -14,7 +14,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw( add_image query_id loaddb savedb cleardb
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw( );
 
-our $VERSION = '0.04_02';
+our $VERSION = '0.05';
 
 require XSLoader;
 XSLoader::load('Image::Seek', $VERSION);
@@ -32,19 +32,25 @@ sub add_image {
 
 sub add_image_magick {
     my ($img, $id) = @_;
-    my ($reds, $blues, $greens);
+    #my ($reds, $blues, $greens);
 
-    #$image->Get('width', 'height');
+    my ($width,$height) = $img->Get('width', 'height');
+    my $thumb;
 
-    my $thumb = $img->Clone();
-    $thumb->Scale('128x128!');
-
-    for my $y (0..127) {
-        for my $x (0..127) {
-            my ($r, $g, $b) = $thumb->GetPixel('x' => $x, 'y' => $y);
-            $reds .= chr($r); $blues .= chr($b); $greens .= chr($g);
-        }
+    if ($width == 128 && $height == 128) {
+      $thumb = $img;
     }
+    else {
+      $thumb = $img->Clone();
+      $thumb->Scale('128x128!');
+    }
+
+    my @red = $thumb->GetPixels('map' => 'R', 'height' => 128, 'width' =>128, 'normalize' => 1);
+    my $reds = join('',(map { chr($_); } @red));
+    my @blue = $thumb->GetPixels('map' => 'B', 'height' => 128, 'width' =>128, 'normalize' => 1);
+    my $blues = join('',(map { chr($_); } @blue));
+    my @green = $thumb->GetPixels('map' => 'G', 'height' => 128, 'width' =>128, 'normalize' => 1);
+    my $greens = join('',(map { chr($_); } @green));
     addImage($id, $reds, $greens, $blues);
 }
 
