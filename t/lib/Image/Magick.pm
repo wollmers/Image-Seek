@@ -3,23 +3,21 @@ package # hide from PAUSE
 
   sub new {
     my $class = shift;
-    bless {}, $class;
+    my $options = {@_};
+    bless $options, $class;
   }
 
   sub Clone { shift; }
 
   sub Scale { shift; }
 
-  sub GetPixel {
-    return (20,20,20);
-  }
-
   sub Get {
-    return (20,20);
+    my $self = shift;
+    return ($self->{height},$self->{width});
   }
 
   sub GetPixels {
-    return (20 x 50);
+    return (20 x 128);
   }
 
   1;
